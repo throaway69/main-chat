@@ -3,16 +3,17 @@ const config = require('./config.json');
 
 process.on('unhandledRejection', error => {
   console.error(
-    "There was an error! Did you update the config.json file? " +
-    "If you did, let me know what the error message says in an issue on the repo on GitHub. \n",
+    "Error a l9lawi! " +
+    "Derti chi haja maachi hya hadik. \n",
     error
   );
   process.exit();
 });
 
-console.log("Ready to level up!");
-var maxMessages = 10000;
-var timeToWait = null, minTime = 2000, maxTime = 4350;
+console.log("send !bro to start!");
+var maxMessages = 1000000;
+// change time here, 4mn = 240000ms
+var timeToWait = null, minTime = 240500, maxTime = 241500;
 var content = null;
 var prune = false;
 setArgValues();
@@ -26,30 +27,37 @@ for (const token of config.botToken) {
     client.on("message", async message => {
       // Ignore message if the content doesn't apply to us
       if (message.author.id !== client.user.id || message.content.indexOf(client.config.prefix) !== 0) return;
-  
+
       const prefix = config.prefix;
       const args = message.content.slice(prefix.length).trim().split(/ +/g);
       const command = args.shift().toLowerCase();
-  
-      if (command === "spam") {
+
+      if (command === "bro") {
         function sendSpamMessage() {
           // You could modify this to send a random string from an array (ex. a quote), create a
           // random sentence by pulling words from a dictionary file, or to just send a random
           // arrangement of characters and integers. Doing something like this may help prevent
           // future moderation bots from detecting that you sent a spam message.
-  
-          if (content) {
-            message.channel.send(content);
-          } else {
-            message.channel.send("This is spam message #" + count);
-          }
-          
+	  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+
+	  function getRandomInt(min, max) {
+		  // Maximum exclusive and minimum inclusive
+		  min = Math.ceil(min);
+		  max = Math.floor(max);
+		  return Math.floor(Math.random() * (max - min) + min);
+	  }
+		  // Change these messages to whatever you want
+		let messages = ["9lawi", "tfo 3la dilmok", "KAYN"];
+		let content = messages[getRandomInt(0, messages.length)];
+		console.log("Your randomly selected message is", content);
+		message.channel.send(content);
+
           if (count < maxMessages) {
             // If you don't care about whether the messages are deleted or not, like if you created a dedicated server
             // channel just for bot spamming, you can remove the below statement and the entire prune command.
-            if (prune) message.channel.send("/prune");
+            if (prune) message.channel.send("!prune");
             count++;
-  
+
             /* These numbers are good for if you want the messages to be deleted.
              * I've also noticed that Discord pauses for about 4 seconds after you send 9
              * messages in rapid succession, and this prevents that. I rarely have any spam
@@ -57,21 +65,19 @@ for (const token of config.botToken) {
              * Mileage may vary based on internet speed. */
             if (!timeToWait)
               timeToWait = Math.floor(Math.random() * (maxTime - minTime)) + minTime;
-  
+
             setTimeout(sendSpamMessage, timeToWait);
           } else {
             // Sends a message when count is equal to maxMessages. Else statement can be
             // modified/removed without consequence.
-            message.channel.send("------------------");
-            message.channel.send("I AM FINISHED!!!");
-            message.channel.send("------------------");
+            message.channel.send(":DDDDDDD");
           }
         }
-  
+
         message.delete().catch(console.error);
         sendSpamMessage();
       }
-  
+
       if (command === "prune") {
         message.channel.fetchMessages()
         .then(messages => {
